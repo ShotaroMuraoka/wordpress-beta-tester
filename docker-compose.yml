@@ -1,0 +1,31 @@
+version: '3.1'
+
+services:
+
+  wordpress:
+    container_name: beta-apache
+    image: wordpress:php7.3-apache
+    ports:
+      - 8090:80 # 任意のポート番号に変更してOK
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
+    volumes:
+      - ./app:/var/www/html
+
+  db:
+    container_name: beta-mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  wordpress:
+  db:
