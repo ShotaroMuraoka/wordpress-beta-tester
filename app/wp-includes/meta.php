@@ -673,7 +673,7 @@ function metadata_exists( $meta_type, $object_id, $meta_key ) {
 	}
 
 	/** This filter is documented in wp-includes/meta.php */
-	$check = apply_filters( "get_{$meta_type}_metadata", null, $object_id, $meta_key, true );
+	$check = apply_filters( "get_{$meta_type}_metadata", null, $object_id, $meta_key, true, $meta_type );
 	if ( null !== $check ) {
 		return (bool) $check;
 	}
@@ -771,11 +771,11 @@ function get_metadata_by_mid( $meta_type, $meta_id ) {
  *
  * @global wpdb $wpdb WordPress database abstraction object.
  *
- * @param string $meta_type  Type of object metadata is for. Accepts 'post', 'comment', 'term', 'user',
- *                           or any other object type with an associated meta table.
- * @param int    $meta_id    ID for a specific meta row.
- * @param string $meta_value Metadata value. Must be serializable if non-scalar.
- * @param string $meta_key   Optional. You can provide a meta key to update it. Default false.
+ * @param string       $meta_type  Type of object metadata is for. Accepts 'post', 'comment', 'term', 'user',
+ *                                 or any other object type with an associated meta table.
+ * @param int          $meta_id    ID for a specific meta row.
+ * @param string       $meta_value Metadata value. Must be serializable if non-scalar.
+ * @param string|false $meta_key   Optional. You can provide a meta key to update it. Default false.
  * @return bool True on successful update, false on failure.
  */
 function update_metadata_by_mid( $meta_type, $meta_id, $meta_value, $meta_key = false ) {
@@ -808,10 +808,10 @@ function update_metadata_by_mid( $meta_type, $meta_id, $meta_value, $meta_key = 
 	 *
 	 * @since 5.0.0
 	 *
-	 * @param null|bool   $check      Whether to allow updating metadata for the given type.
-	 * @param int         $meta_id    Meta ID.
-	 * @param mixed       $meta_value Meta value. Must be serializable if non-scalar.
-	 * @param string|bool $meta_key   Meta key, if provided.
+	 * @param null|bool    $check      Whether to allow updating metadata for the given type.
+	 * @param int          $meta_id    Meta ID.
+	 * @param mixed        $meta_value Meta value. Must be serializable if non-scalar.
+	 * @param string|false $meta_key   Meta key, if provided.
 	 */
 	$check = apply_filters( "update_{$meta_type}_metadata_by_mid", null, $meta_id, $meta_value, $meta_key );
 	if ( null !== $check ) {
@@ -1159,7 +1159,8 @@ function _get_meta_table( $type ) {
  * @return bool Whether the meta key is considered protected.
  */
 function is_protected_meta( $meta_key, $meta_type = '' ) {
-	$protected = ( '_' === $meta_key[0] );
+	$sanitized_key = preg_replace( "/[^\x20-\x7E\p{L}]/", '', $meta_key );
+	$protected     = strlen( $sanitized_key ) > 0 && ( '_' === $sanitized_key[0] );
 
 	/**
 	 * Filters whether a meta key is considered protected.
