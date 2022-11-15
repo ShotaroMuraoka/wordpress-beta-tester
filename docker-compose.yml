@@ -11,7 +11,7 @@ services:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: exampleuser
       WORDPRESS_DB_PASSWORD: examplepass
-      WORDPRESS_DB_NAME: exampledb
+      WORDPRESS_DB_NAME: exampledbq
     volumes:
       - ./app:/var/www/html
 
