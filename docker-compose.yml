@@ -11,7 +11,7 @@ services:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: exampleuser
       WORDPRESS_DB_PASSWORD: examplepass
-      WORDPRESS_DB_NAME: exampledbq
+      WORDPRESS_DB_NAME: exampledb
     volumes:
       - ./app:/var/www/html
 
@@ -25,6 +25,13 @@ services:
       MYSQL_RANDOM_ROOT_PASSWORD: '1'
     volumes:
       - db:/var/lib/mysql
+  adminer:
+    container_name: beta-adminer
+    image: adminer
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
 
 volumes:
   wordpress:
